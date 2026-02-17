@@ -204,3 +204,7 @@ Max パッチ (`max-restapi.maxpat`) を開き、`script npm install` → `scrip
 1. `README.md` — 本ファイルの API エンドポイントセクション
 2. `.agent/skills/max-restapi/SKILL.md` — Agent Skills 定義
 3. `.claude/skills/max-restapi/SKILL.md` — Agent Skills 定義（Claude Code 用）
+
+## ライセンス
+
+[MIT](./LICENSE)
