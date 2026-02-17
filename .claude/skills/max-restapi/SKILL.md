@@ -96,6 +96,38 @@ curl http://localhost:3009/objects/bounds
 # => { "results": [50, 80, 400, 350] }
 ```
 
+#### コンソールメッセージ取得
+
+```
+GET /console?level=info&since_last_call=false
+```
+
+Max コンソール（Max 窓）のメッセージを取得する。パッチ内の `console` オブジェクトでキャプチャしたメッセージをバッファから返す。
+
+| パラメータ | 型 | デフォルト | 説明 |
+|-----------|-----|-----------|------|
+| `level` | string (query) | `"info"` | フィルタレベル: `"error"`, `"warning"`, `"info"`。指定レベル以上を返す |
+| `since_last_call` | string (query) | `"false"` | `"true"` で前回取得以降のメッセージのみ返す |
+
+```bash
+curl "http://localhost:3009/console?level=error"
+curl "http://localhost:3009/console?since_last_call=true"
+```
+
+レスポンス例:
+
+```json
+{
+  "messages": [
+    { "id": 0, "level": "error", "message": "error: cycle~ bad inlet index", "timestamp": "2026-02-17T12:00:00.000Z" }
+  ],
+  "overflow": false
+}
+```
+
+- `overflow: true`: バッファ上限（1000件）超過で古いメッセージが失われた
+- standalone モード: `{ messages: [], overflow: false }`
+
 ### ミューテーション（書き込み）
 
 #### オブジェクト追加

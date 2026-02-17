@@ -9,7 +9,7 @@
             "modernui": 1
         },
         "classnamespace": "box",
-        "rect": [ 78.0, 405.0, 1036.0, 730.0 ],
+        "rect": [ 185.0, 1233.0, 1177.0, 878.0 ],
         "boxes": [
             {
                 "box": {
@@ -75,7 +75,7 @@
                     "saved_object_attributes": {
                         "autostart": 0,
                         "defer": 0,
-                        "watch": 0
+                        "watch": 1
                     },
                     "text": "node.script index.js",
                     "textfile": {
@@ -149,6 +149,28 @@
                     "patching_rect": [ 30.0, 280.0, 350.0, 20.0 ],
                     "text": "1. npm install  2. start  3. curl http://localhost:3009/"
                 }
+            },
+            {
+                "box": {
+                    "id": "obj-12",
+                    "maxclass": "newobj",
+                    "numinlets": 1,
+                    "numoutlets": 3,
+                    "outlettype": [ "", "", "int" ],
+                    "patching_rect": [ 361.0, 19.0, 55.0, 22.0 ],
+                    "text": "console"
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-13",
+                    "maxclass": "newobj",
+                    "numinlets": 1,
+                    "numoutlets": 1,
+                    "outlettype": [ "" ],
+                    "patching_rect": [ 361.0, 51.0, 130.0, 22.0 ],
+                    "text": "prepend console_msg"
+                }
             }
         ],
         "lines": [
@@ -175,6 +197,18 @@
                     "destination": [ "obj-4", 0 ],
                     "midpoints": [ 104.5, 232.0, 81.3671875, 232.0, 81.3671875, 80.0, 179.5, 80.0 ],
                     "source": [ "obj-11", 0 ]
+                }
+            },
+            {
+                "patchline": {
+                    "destination": [ "obj-13", 0 ],
+                    "source": [ "obj-12", 1 ]
+                }
+            },
+            {
+                "patchline": {
+                    "destination": [ "obj-4", 0 ],
+                    "source": [ "obj-13", 0 ]
                 }
             },
             {

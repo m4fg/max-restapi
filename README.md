@@ -100,6 +100,43 @@ GET /
 | GET | `/objects/selected` | 選択中のオブジェクトを取得 |
 | GET | `/objects/:varname/attributes` | オブジェクトの属性を取得 |
 | GET | `/objects/bounds` | オブジェクトの配置領域（バウンディングボックス）を取得 |
+| GET | `/console` | Max コンソールメッセージを取得 |
+
+#### コンソールメッセージ取得
+
+```
+GET /console?level=info&since_last_call=false
+```
+
+Max コンソール（Max 窓）のメッセージを取得する。パッチ内の `console` オブジェクトでキャプチャしたメッセージをバッファから返す。
+
+| パラメータ | 型 | デフォルト | 説明 |
+|-----------|-----|-----------|------|
+| `level` | string (query) | `"info"` | フィルタレベル: `"error"`, `"warning"`, `"info"`。指定レベル以上を返す |
+| `since_last_call` | string (query) | `"false"` | `"true"` で前回取得以降のメッセージのみ返す |
+
+```bash
+# エラーメッセージのみ取得
+curl "http://localhost:3009/console?level=error"
+
+# 前回以降の全メッセージを取得
+curl "http://localhost:3009/console?since_last_call=true"
+```
+
+レスポンス例:
+
+```json
+{
+  "messages": [
+    { "id": 0, "level": "error", "message": "error: cycle~ bad inlet index", "timestamp": "2026-02-17T12:00:00.000Z" },
+    { "id": 1, "level": "info", "message": "print: hello", "timestamp": "2026-02-17T12:00:01.000Z" }
+  ],
+  "overflow": false
+}
+```
+
+- `overflow: true` はバッファ上限（1000件）超過で古いメッセージが失われたことを示す
+- standalone モードでは常に `{ messages: [], overflow: false }` を返す
 
 ### ミューテーション
 

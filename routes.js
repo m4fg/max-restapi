@@ -1,10 +1,20 @@
 import { Router } from "express";
-import { maxApi, log, queryMax } from "./max.js";
+import { maxApi, log, queryMax, getConsoleMessages } from "./max.js";
 import { mockPatcher, patcherNewObject, patcherDelete, patcherConnect, patcherDisconnect, patcherSetAttribute, patcherSetText, patcherSendMessage, patcherSendBang, patcherSetNumber, } from "./patcher.js";
 export const router = Router();
 // --- Query endpoints ---
 router.get("/", (_req, res) => {
     res.json({ status: "ok" });
+});
+router.get("/console", (req, res) => {
+    if (!maxApi) {
+        res.json({ messages: [], overflow: false });
+        return;
+    }
+    const level = ["error", "warning", "info"].includes(req.query.level) ? req.query.level : "info";
+    const sinceLastCall = req.query.since_last_call === "true";
+    const result = getConsoleMessages(level, sinceLastCall);
+    res.json(result);
 });
 router.get("/objects", async (_req, res) => {
     if (!maxApi) {

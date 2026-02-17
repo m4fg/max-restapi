@@ -17,6 +17,50 @@ export const log = (message) => {
         console.log(message);
     }
 };
+// --- Console message buffer ---
+const MAX_CONSOLE_BUFFER = 1000;
+const consoleBuffer = [];
+let nextId = 0;
+let lastReadId = -1;
+const LEVEL_PRIORITY = { error: 2, warning: 1, info: 0 };
+
+function detectLevel(message) {
+    const lower = message.toLowerCase();
+    if (lower.includes("error")) return "error";
+    if (lower.includes("warning")) return "warning";
+    return "info";
+}
+
+function pushConsoleMessage(message, level) {
+    const entry = {
+        id: nextId++,
+        level,
+        message,
+        timestamp: new Date().toISOString(),
+    };
+    consoleBuffer.push(entry);
+    if (consoleBuffer.length > MAX_CONSOLE_BUFFER) {
+        consoleBuffer.shift();
+    }
+}
+
+export function getConsoleMessages(level = "info", sinceLastCall = false) {
+    const minPriority = LEVEL_PRIORITY[level] ?? LEVEL_PRIORITY.info;
+    const startId = sinceLastCall ? lastReadId : -1;
+
+    const filtered = consoleBuffer.filter(
+        (e) => e.id > startId && (LEVEL_PRIORITY[e.level] ?? 0) >= minPriority
+    );
+
+    const overflow = sinceLastCall && consoleBuffer.length > 0 && consoleBuffer[0].id > lastReadId + 1;
+
+    if (sinceLastCall && consoleBuffer.length > 0) {
+        lastReadId = consoleBuffer[consoleBuffer.length - 1].id;
+    }
+
+    return { messages: filtered, overflow };
+}
+
 // --- Request/Response correlation for queries ---
 const RESPONSE_TIMEOUT_MS = 5000;
 const pendingRequests = new Map();
@@ -38,11 +82,17 @@ export function queryMax(params) {
             pendingRequests.delete(requestId);
             resolve(null);
         }
-        log(`[query] ${requestId} ${String(params.action)}`);
+        log(`[queryMax] ${requestId} ${String(params.action)}`);
     });
 }
 // Max からのレスポンスを受け取る
 if (maxApi) {
+    // console オブジェクト経由のメッセージをバッファに蓄積
+    maxApi.addHandler("console_msg", (...msg) => {
+        const message = msg.join(" ");
+        const level = detectLevel(message);
+        pushConsoleMessage(message, level);
+    });
     maxApi.addHandler("response", (...msg) => {
         const str = msg.join("");
         let data;
