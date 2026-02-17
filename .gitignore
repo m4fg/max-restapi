@@ -1,6 +1,3 @@
 node_modules
 .serena
-.claude
-.agent
-.codex
-.gimini
+.claude/settings.local.json

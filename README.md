@@ -159,3 +159,11 @@ curl -X POST http://localhost:3009/objects/osc1/bang
 Max パッチ (`max-restapi.maxpat`) を開き、`script npm install` → `script start` の順にクリック。
 
 ポートはデフォルト `3009`。環境変数 `PORT` で変更可能。
+
+## エンドポイント変更時のルール
+
+エンドポイントを追加・変更・削除した場合、以下の3ファイルを**必ず**同時に更新すること:
+
+1. `README.md` — 本ファイルの API エンドポイントセクション
+2. `.agent/skills/max-restapi/SKILL.md` — Agent Skills 定義
+3. `.claude/skills/max-restapi/SKILL.md` — Agent Skills 定義（Claude Code 用）
